@@ -1,0 +1,7 @@
+{
+  "name": "Laureate places API",
+  "version": "1.0.0",
+  "description": "Laureate back-end test",
+  "title": "Laureate",
+  "url" : "http://localhost:8080"
+}
