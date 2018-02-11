@@ -1,52 +1,41 @@
+const path = require('path');
 const express = require('express');
 const bodyParser = require('body-parser');
 const device = require('express-device');
 const cors = require('cors')
 const mongoose = require('mongoose');
 require('dotenv').config()
+const places = require('./routes/places');
 
 const app = express();
 mongoose.connect(`mongodb://${process.env.DB_HOST}:${process.env.DB_PORT}/${process.env.DB_DATABASE}`);
+
+app.set('views', path.join(__dirname, 'views'));
+app.set('view engine', 'pug');
 
 app.use(cors());
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(bodyParser.json());
 app.use(device.capture());
 
-const UniversitySchema = mongoose.Schema({
-  latitude: Number,
-  longitude: Number,
-  radius: Number,
-  device: Object,
-  browser: String,
-  university: Object,
+app.use(express.static(path.join(__dirname, 'public')));
+
+app.use('/places', places);
+
+// catch 404 and forward to error handler
+app.use(function(req, res, next) {
+  var err = new Error('Not Found');
+  err.status = 404;
+  next(err);
 });
 
-const University = mongoose.model('University', UniversitySchema);
+// error handler
+app.use(function(err, req, res, next) {
+  res.locals.error = err;
 
-app.post('/places', function (req, res) {
-  const {
-    latitude,
-    longitude,
-    radius,
-    university,
-  } = req.body;
-
-  University.create({
-    latitude,
-    longitude,
-    radius,
-    browser: req.headers['user-agent'],
-    university,
-    device: {
-      type: req.device.type,
-      name: req.device.name,
-    },
-  }, function (err, university) {
-    if (err) return handleError(err);
-
-    res.json(university);
-  });
+  // render the error page
+  res.status(err.status || 500);
+  res.render('error');
 });
 
 app.listen(3000)
