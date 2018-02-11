@@ -18,4 +18,5 @@ After the initial setup, run the following command:
 ```
 
 Access the app on http://localhost:3000
+
 Access the docs on http://localhost:3000/docs
