@@ -38,4 +38,4 @@ app.use(function(err, req, res, next) {
   res.render('error');
 });
 
-app.listen(3000)
+app.listen(process.env.APP_PORT || 3000)
